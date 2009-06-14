@@ -44,20 +44,20 @@ Create a file for the friendship (or whatever you want to call it) class. An exa
     
 ### There are options ###
   
-  # /some/folder/homie.rb
-  class Homie
-    property :gangster_id, Integer, :key => true
-    property :friend_id, Integer, :key => true
-    property :accepted_at, DateTime, :nullable => true
+    # /some/folder/homie.rb
+    class Homie
+      property :gangster_id, Integer, :key => true
+      property :friend_id, Integer, :key => true
+      property :accepted_at, DateTime, :nullable => true
 
-    belongs_to :gangster, :child_key => [:gangster_id]
-    belongs_to :homie, :class_name => "Homie", :child_key => [:friend_id]
-  end
-  
-  # /some/folder/gangster.rb
-  class Gangster
-    is :friendly, :friendship_class => "Homie", :require_acceptance => false
-  end
+      belongs_to :gangster, :child_key => [:gangster_id]
+      belongs_to :homie, :class_name => "Homie", :child_key => [:friend_id]
+    end
+
+    # /some/folder/gangster.rb
+    class Gangster
+      is :friendly, :friendship_class => "Homie", :require_acceptance => false
+    end
   
 This would change the friendship class to Homie, and make it not require friendships to be accepted. I admit, it was kind of dumb to do it that way, but I just made this into a gem so that it wasn't lying around my code base. I'll make it more useful in the next run.
 
