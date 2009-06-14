@@ -16,10 +16,15 @@ Gem::Specification.new do |s|
     ".document",
      ".gitignore",
      "LICENSE",
+     "README.markdown",
      "Rakefile",
      "VERSION",
+     "dm-is-friendly.gemspec",
      "lib/dm-is-friendly.rb",
+     "lib/is/friendly.rb",
+     "lib/is/version.rb",
      "spec/dm-is-friendly_spec.rb",
+     "spec/spec.opts",
      "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/kabari/dm-is-friendly}
