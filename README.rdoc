@@ -1,0 +1,7 @@
+= dm-is-friendly
+
+Description goes here.
+
+== Copyright
+
+Copyright (c) 2009 Kabari Hendrick. See LICENSE for details.
