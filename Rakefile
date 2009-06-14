@@ -1,15 +1,20 @@
 require 'rubygems'
 require 'rake'
+require File.join(File.dirname(__FILE__), *%w[lib is version])
+
+version = DataMapper::Is::Friendly::VERSION
 
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "dm-is-friendly"
-    gem.summary = %Q{TODO}
+    gem.summary = %Q{DataMapper plugin that adds self-referential friendship functionality to your models.}
     gem.email = "manbehindtheman@kabari.name"
     gem.homepage = "http://github.com/kabari/dm-is-friendly"
     gem.authors = ["Kabari Hendrick"]
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependency("extlib", "~> #{version}")
+    gem.add_dependency("dm-core", "~> #{version}")
+    gem.add_dependency("dm-aggregates", "~> #{version}")
   end
 
 rescue LoadError
@@ -32,14 +37,8 @@ end
 task :default => :spec
 
 require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  if File.exist?('VERSION.yml')
-    config = YAML.load(File.read('VERSION.yml'))
-    version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"
-  else
-    version = ""
-  end
 
+Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "dm-is-friendly #{version}"
   rdoc.rdoc_files.include('README*')
