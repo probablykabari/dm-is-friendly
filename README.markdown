@@ -44,7 +44,7 @@ Create a file for the friendship (or whatever you want to call it) class. An exa
     
 ### There are options ###
   
-  # /some/folder/
+  # /some/folder/homie.rb
   class Homie
     property :gangster_id, Integer, :key => true
     property :friend_id, Integer, :key => true
@@ -54,7 +54,7 @@ Create a file for the friendship (or whatever you want to call it) class. An exa
     belongs_to :homie, :class_name => "Homie", :child_key => [:friend_id]
   end
   
-  # /some/folder
+  # /some/folder/gangster.rb
   class Gangster
     is :friendly, :friendship_class => "Homie", :require_acceptance => false
   end
