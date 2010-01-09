@@ -1,7 +1,10 @@
+# path to my git clones of the latest dm-core
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), *%w[.. ..]))
+
 require 'pathname'
 require 'rubygems'
 
-gem 'rspec', '~>1.2.6'
+gem 'rspec', '~>1.2.9'
 require 'spec'
 
 require Pathname(__FILE__).dirname.expand_path.parent + 'lib/dm-is-friendly'
