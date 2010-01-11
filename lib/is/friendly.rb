@@ -21,34 +21,20 @@ module DataMapper
       
       # This class holds the configuration options for the plugin.
       class FriendlyConfig
-        attr_reader :friend_class
+        attr_reader :friend_class, :friendship_foreign_key, :friend_foreign_key
         
         def initialize(klazz, opts)
-          @friendship_class_name = opts[:friendship_class]
-          @friend_class = klazz
-          @require_acceptance = opts[:require_acceptance]
+          @friend_class           = klazz
+          @friendship_class_name  = opts[:friendship_class]
+          @friendship_foreign_key = Extlib::Inflection.foreign_key(@friend_class.name).to_sym
+          @friend_foreign_key     = Extlib::Inflection.foreign_key(@friendship_class_name).to_sym
+          @require_acceptance     = opts[:require_acceptance]
         end
         
         def friendship_class
           Object.full_const_get(@friendship_class_name)
         end
         
-        def friendship_foreign_key
-          Extlib::Inflection.foreign_key(friend_class.name)
-        end
-      
-        def friend_foreign_key
-          Extlib::Inflection.foreign_key(friendship_class.name)
-        end
-        
-        def friend_table_name
-          Extlib::Inflection.tableize(friend_class.name)
-        end
-      
-        def friendship_table_name
-          Extlib::Inflection.tableize(friendship_class.name)
-        end
-              
         def require_acceptance?
           @require_acceptance
         end   
@@ -79,7 +65,7 @@ module DataMapper
           friend_scope_condition(conditions, friend, true)
           
           conditions[:friend_id] = self.id
-          ids = friendly_options.friendship_class.all(conditions).collect(&friendly_options.friendship_foreign_key.to_sym)
+          ids = friendly_options.friendship_class.all(conditions).collect(&friendly_options.friendship_foreign_key)
           self.class.all(:id => ids)
         end
         

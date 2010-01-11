@@ -27,9 +27,7 @@ describe 'DataMapper::Is::Friendly' do
   it "should have proper options set" do
     Person.friendly_options.friendship_class.should == Friendship
     Person.friendly_options.friend_class.should     == Person
-    Person.friendly_options.friendship_foreign_key.should == "person_id"
-    Person.friendly_options.friend_table_name.should == "people"
-    Person.friendly_options.friendship_table_name.should == "friendships"
+    Person.friendly_options.friendship_foreign_key.should == :person_id
     Person.friendly_options.require_acceptance?.should == true
   end
 end
