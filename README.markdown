@@ -10,9 +10,9 @@ If you're building a social app, it will probably save you 12 minutes, tops.
 
 ## Installation ##
 
-Probably make sure you can use github gems first.
+Probably make sure you can use gemcutter gems first.
 
-$ sudo gem install kabari-dm-is-friendly.
+    $ [sudo] gem install dm-is-friendly.
 
 Create a file for the friendship (or whatever you want to call it) class. An example is below.
 
