@@ -6,7 +6,7 @@ class Friendship
   property :friend_id, Integer, :key => true
   property :accepted_at, DateTime, :required => false
   
-  belongs_to :person, :child_key => [:person_id]
+  belongs_to :person
   belongs_to :friend, :model => "Person", :child_key => [:friend_id]
   
 end
@@ -117,7 +117,7 @@ class Homie
   property :gangster_id, Integer, :key => true
   property :friend_id, Integer, :key => true
   
-  belongs_to :gangster, :child_key => [:gangster_id]
+  belongs_to :gangster
   belongs_to :friend, :model => "Gangster", :child_key => [:friend_id]
   
 end

@@ -12,7 +12,7 @@ module DataMapper
         has n, :friendships, :model => "#{friendly_config.friendship_class.name}"
         has n, :friends_by_me, :through => :friendships, :model => "#{self.name}", :via => :#{self.name.downcase}
         has n, :friended_by, :through => :friendships, :model => "#{self.name}",
-                             :via => :#{self.name.downcase}, :child_key => [:friend_id]
+                             :via => :#{self.name.downcase}
         RUBY
         )
         
@@ -91,13 +91,13 @@ module DataMapper
         # see if there is a pending friendship request from this person to another
         def friendship_requested?(friend)
           # return false unless friendly_config.require_acceptance?
-          !friendship_requests(friend).empty? #.detect{|f| f.friend_id = friend.id} #.first('friendships.friend_id' => friend.id)
+          !friendship_requests(friend).empty?
         end
         
         # see if user has a friend request to accept from this person
         def friendship_to_accept?(friend)
           return false unless friendly_config.require_acceptance?
-          !friendships_to_accept(friend).empty? #first('friendships.person_id' => friend.id)
+          !friendships_to_accept(friend).empty?
         end
 
         # Accepts a user object and returns true if both users are
@@ -116,13 +116,12 @@ module DataMapper
         # be accepted.
         def confirm_friendship_with(friend)
           self.friendship(friend,{:accepted_at => nil}).update({:accepted_at => Time.now})
-          # reload so old relationship won't be lingering
+          # reload so old relationship won't be lingering in the IdentityMap
           friend.reload
           self.reload
         end
 
-        # Accepts a user object and deletes a friendship between both 
-        # users.
+        # Accepts a user object and deletes a friendship between both users.
         def end_friendship_with(friend)
           self.friendship(friend).destroy if self.is_friends_with?(friend)
         end
