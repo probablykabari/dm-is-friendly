@@ -15,12 +15,5 @@ require "dm-aggregates"
 # Require plugin-files
 require Pathname(__FILE__).dirname.expand_path / 'is' / 'friendly'
 
-# Include the plugin in Resource
-# module DataMapper
-#   module Model
-#     include DataMapper::Is::Friendly
-#   end # module Model
-# end # module DataMapper
-
-# An alternative way to do the same thing as above:
+# Include the plugin in Model
 DataMapper::Model.append_extensions(DataMapper::Is::Friendly)

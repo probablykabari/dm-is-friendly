@@ -12,7 +12,7 @@ begin
     gem.email = "manbehindtheman@kabari.name"
     gem.homepage = "http://github.com/kabari/dm-is-friendly"
     gem.authors = ["Kabari Hendrick"]
-    gem.add_dependency("extlib", "~> #{version}")
+    gem.add_dependency("extlib", "~> 0.9.14")
     gem.add_dependency("dm-core", "~> #{version}")
     gem.add_dependency("dm-aggregates", "~> #{version}")
   end
