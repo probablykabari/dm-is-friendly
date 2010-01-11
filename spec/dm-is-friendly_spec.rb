@@ -4,20 +4,20 @@ class Friendship
   include DataMapper::Resource
   property :person_id, Integer, :key => true
   property :friend_id, Integer, :key => true
-  property :accepted_at, DateTime, :nullable => true
+  property :accepted_at, DateTime, :required => false
   
   belongs_to :person, :child_key => [:person_id]
-  belongs_to :friend, :class_name => "Person", :child_key => [:friend_id]
+  belongs_to :friend, :model => "Person", :child_key => [:friend_id]
   
 end
 
 class Person
   include DataMapper::Resource
-  property :id, Integer, :serial => true
+  property :id, Serial
   property :name, String
+  
   is :friendly
 end
-
 
 describe 'DataMapper::Is::Friendly' do
   before(:all) do
@@ -56,9 +56,13 @@ describe 'DataMapper::Is::Friendly', "with friendships" do
 
   it "should set the proper relationships" do
     # see if associations are correct
+    log("@quention.friendship_requests")
     @quentin.friendship_requests.should_not include(@joe)
+    log("@joe.friendship_requests")
     @joe.friendship_requests.should include(@quentin)
+    log("@quention.friendships_to_accept")
     @quentin.friendships_to_accept.should include(@joe)
+    log("@joe.friendships_to_accept")
     @joe.friendships_to_accept.should_not include(@quentin)
   end
   
@@ -114,13 +118,13 @@ class Homie
   property :friend_id, Integer, :key => true
   
   belongs_to :gangster, :child_key => [:gangster_id]
-  belongs_to :friend, :class_name => "Gangster", :child_key => [:friend_id]
+  belongs_to :friend, :model => "Gangster", :child_key => [:friend_id]
   
 end
 
 class Gangster
   include DataMapper::Resource
-  property :id, Integer, :serial => true
+  property :id, Serial
   property :name, String
   is :friendly, :friendship_class => "Homie", :require_acceptance => false
 end

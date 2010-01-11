@@ -5,28 +5,16 @@ module DataMapper
       
       def is_friendly(options = {})
         options = {:require_acceptance => true, :friendship_class => "Friendship" }.merge(options)
-        @friendly_config = FriendlyConfig.new(self, options)
-        class << self; self; end.class_eval do
-          attr_reader :friendly_config      
-          def friendly_config; @friendly_config; end
-        end
+        @friendly_config = FriendlyConfig.new(self, options)        
+        def self.friendly_config; @friendly_config; end
         
-        class_eval(<<-EOS,(__FILE__),(__LINE__)
-        has n, :friendships, :class_name => "#{friendly_config.friendship_class.name}"
-        has n, :friends_by_me, :through => :friendships, :class_name => "#{self.name}",
-                         :child_key => [:#{Extlib::Inflection.foreign_key(self.name)}]
-        has n, :friended_by, :through => :friendships, :class_name => "#{self.name}",
-                             :remote_name => "#{self.name.downcase}", :child_key => [:friend_id]
-        EOS
+        class_eval(<<-RUBY,(__FILE__),(__LINE__+1)
+        has n, :friendships, :model => "#{friendly_config.friendship_class.name}"
+        has n, :friends_by_me, :through => :friendships, :model => "#{self.name}", :via => :#{self.name.downcase}
+        has n, :friended_by, :through => :friendships, :model => "#{self.name}",
+                             :via => :#{self.name.downcase}, :child_key => [:friend_id]
+        RUBY
         )
-        
-        # stuff like this didn't work as of DM 0.9.10, hence the mass amounts of hand ql queries
-        # returns all the people I have requested frienship from
-        # has n, :friendship_requests, :through => :friendships, :class_name => "Person",
-                                     # :child_key => [:person_id]
-        # returns all the people that have requested my friendship
-        # has n, :friendships_to_accept, :through => :friendships, :class_name => "Person",
-                                     # :remote_name => :person, :child_key => [:friend_id]
         
         include DataMapper::Is::Friendly::InstanceMethods
       end
@@ -64,35 +52,40 @@ module DataMapper
       module InstanceMethods
         
         def friends
-          friends_sql = <<-SQL
-             SELECT #{friendly_config.friend_table_name}.* FROM #{friendly_config.friend_table_name} INNER JOIN #{friendly_config.friendship_table_name} 
-             ON #{friendly_config.friend_table_name}.id = #{friendly_config.friendship_table_name}.#{friendly_config.friendship_foreign_key} WHERE ((#{friendly_config.friendship_table_name}.friend_id = #{id}) #{acceptance_sql(true)})
-             UNION
-             SELECT #{friendly_config.friend_table_name}.* FROM #{friendly_config.friend_table_name} INNER JOIN #{friendly_config.friendship_table_name} 
-             ON #{friendly_config.friend_table_name}.id = #{friendly_config.friendship_table_name}.friend_id WHERE ((#{friendly_config.friendship_table_name}.#{friendly_config.friendship_foreign_key} = #{id}) #{acceptance_sql(true)})
-          SQL
-          
-          self.class.find_by_sql(friends_sql)
+          friendship_requests(nil,true).union(friendships_to_accept(nil,true))
         end
-        
+                
         # returns all the people I have requested frienship from
-        def friendship_requests(friend = nil)
-          sql = [%{SELECT #{friendly_config.friend_table_name}.* FROM #{friendly_config.friend_table_name} INNER JOIN #{friendly_config.friendship_table_name}}]
-          sql << %{ON #{friendly_config.friend_table_name}.id = #{friendly_config.friendship_table_name}.friend_id}
-          sql << %{WHERE ((#{friendly_config.friendship_table_name}.#{friendly_config.friendship_foreign_key} = #{id}) #{acceptance_sql}}
-          sql << select_friendship_sql(friend) if friend
-          sql << ") #{'LIMIT 1' if friend}"
-          self.class.find_by_sql(sql.join(' '))
+        def friendship_requests(friend = nil, include_accepted = false)
+          conditions = {}
+          if friendly_config.require_acceptance?
+            include_accepted ? (conditions[:accepted_at.not] = nil) :(conditions[:accepted_at] = nil)
+          end
+          
+          if friend
+            conditions[:friend_id] = friend.id
+            conditions[:limit] = 1
+          end
+          conditions[friendly_config.friendship_foreign_key] = self.id
+          ids = friendly_config.friendship_class.all(conditions).collect(&:friend_id)
+          self.class.all( :id => ids)
         end
-        
+                
         # returns all the people that have requested my friendship
-        def friendships_to_accept(friend = nil)
-          sql = [%{SELECT #{friendly_config.friend_table_name}.* FROM #{friendly_config.friend_table_name} INNER JOIN #{friendly_config.friendship_table_name}}]
-          sql << %{ON #{friendly_config.friend_table_name}.id = #{friendly_config.friendship_table_name}.#{friendly_config.friendship_foreign_key}} 
-          sql << %{WHERE ((#{friendly_config.friendship_table_name}.friend_id = #{id}) #{acceptance_sql}}
-          sql << select_friendship_sql(friend,true) if friend
-          sql << ") #{'LIMIT 1' if friend}"
-          self.class.find_by_sql(sql.join(' '))
+        def friendships_to_accept(friend = nil, include_accepted = false)
+          conditions = {}
+          if friendly_config.require_acceptance?
+            include_accepted ? (conditions[:accepted_at.not] = nil) : (conditions[:accepted_at] = nil)
+          end
+          
+          if friend
+            conditions[friendly_config.friendship_foreign_key] = friend.id
+            conditions[:limit] = 1
+          end
+          
+          conditions[:friend_id] = self.id
+          ids = friendly_config.friendship_class.all(conditions).collect(&friendly_config.friendship_foreign_key.to_sym)
+          self.class.all(:id => ids)
         end
         
         # see if there is a pending friendship request from this person to another
@@ -122,7 +115,7 @@ module DataMapper
         # Accepts a user object and updates an existing friendship to
         # be accepted.
         def confirm_friendship_with(friend)
-          self.friendship(friend,{:accepted_at => nil}).update_attributes({:accepted_at => Time.now})
+          self.friendship(friend,{:accepted_at => nil}).update({:accepted_at => Time.now})
           # reload so old relationship won't be lingering
           friend.reload
           self.reload

@@ -9,6 +9,8 @@ require 'spec'
 
 require Pathname(__FILE__).dirname.expand_path.parent + 'lib/dm-is-friendly'
 
+DataMapper::Logger.new("test.log", :debug)
+
 def load_driver(name, default_uri)
   return false if ENV['ADAPTER'] != name.to_s
 
@@ -25,5 +27,9 @@ end
 ENV['ADAPTER'] ||= 'sqlite3'
 
 HAS_SQLITE3  = load_driver(:sqlite3,  'sqlite3::memory:')
-HAS_MYSQL    = load_driver(:mysql,    'mysql://localhost/dm_core_test')
-HAS_POSTGRES = load_driver(:postgres, 'postgres://postgres@localhost/dm_core_test')
+HAS_MYSQL    = load_driver(:mysql,    'mysql://localhost/dm_is_friendly_test')
+HAS_POSTGRES = load_driver(:postgres, 'postgres://postgres@localhost/dm_is_friendly_test')
+
+Spec::Runner.configure do |conf|
+  def log(msg); DataMapper.logger.push("****** #{msg}"); end
+end
