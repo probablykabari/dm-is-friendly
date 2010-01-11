@@ -24,13 +24,13 @@ describe 'DataMapper::Is::Friendly' do
     Friendship.auto_migrate!; Person.auto_migrate!
   end
   
-  it "should have proper config" do
-    Person.friendly_config.friendship_class.should == Friendship
-    Person.friendly_config.friend_class.should     == Person
-    Person.friendly_config.friendship_foreign_key.should == "person_id"
-    Person.friendly_config.friend_table_name.should == "people"
-    Person.friendly_config.friendship_table_name.should == "friendships"
-    Person.friendly_config.require_acceptance?.should == true
+  it "should have proper options set" do
+    Person.friendly_options.friendship_class.should == Friendship
+    Person.friendly_options.friend_class.should     == Person
+    Person.friendly_options.friendship_foreign_key.should == "person_id"
+    Person.friendly_options.friend_table_name.should == "people"
+    Person.friendly_options.friendship_table_name.should == "friendships"
+    Person.friendly_options.require_acceptance?.should == true
   end
 end
 
@@ -129,7 +129,7 @@ class Gangster
   is :friendly, :friendship_class => "Homie", :require_acceptance => false
 end
 
-describe 'DataMapper::Is::Friendly', "with changed options" do
+describe 'DataMapper::Is::Friendly', "without requiring acceptance" do
   before(:all) do
     Homie.auto_migrate!; Gangster.auto_migrate!
     
