@@ -9,14 +9,14 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "dm-is-friendly"
     gem.summary = %Q{DataMapper plugin that adds self-referential friendship functionality to your models.}
-    gem.email = "manbehindtheman@kabari.name"
+    gem.email = "kabari@gmail.com"
     gem.homepage = "http://github.com/kabari/dm-is-friendly"
     gem.authors = ["Kabari Hendrick"]
     gem.add_dependency("extlib", "~> 0.9.14")
     gem.add_dependency("dm-core", "~> #{version}")
     gem.add_dependency("dm-aggregates", "~> #{version}")
   end
-
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
