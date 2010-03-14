@@ -43,39 +43,47 @@ module DataMapper
       module InstanceMethods
         
         # returns all of the friends this person has that are accepted
+        # @return [DataMapper::Collection] All the person's friends
         def friends
           friendship_requests(nil,true).union(friendships_to_accept(nil,true))
         end
                 
         # returns all the people I have requested frienship from
+        # @param friend (nil)
+        # @param include_accepted (false)
+        # @return [DataMapper::Collection] All the people that the person has sent friendship requests to
         def friendship_requests(friend = nil, include_accepted = false)
           conditions = {}
           friend_acceptance_condition(conditions, include_accepted)
           friend_scope_condition(conditions, friend)
           
           conditions[friendly_options.friendship_foreign_key] = self.id
-          ids = friendly_options.friendship_class.all(conditions).collect(&:friend_id)
-          self.class.all( :id => ids)
+          friendly_options.friendship_class.all(conditions).friend
         end
                 
         # returns all the people that have requested my friendship
+        # @param friend (nil)
+        # @param include_accepted (false)
+        # @return [DataMapper::Collection] All the people that have requested friendship
         def friendships_to_accept(friend = nil, include_accepted = false)
           conditions = {}
           friend_acceptance_condition(conditions, include_accepted)
           friend_scope_condition(conditions, friend, true)
           
-          conditions[:friend_id] = self.id
-          ids = friendly_options.friendship_class.all(conditions).collect(&friendly_options.friendship_foreign_key)
-          self.class.all(:id => ids)
+          conditions[:friend_id] = self.id                      
+          friendly_options.friendship_class.all(conditions).send(friendly_options.friend_class.name.downcase)
         end
         
         # see if there is a pending friendship request from this person to another
+        # @param friend
+        # @return [true, false]
         def friendship_requested?(friend)
-          # return false unless friendly_options.require_acceptance?
           !friendship_requests(friend).empty?
         end
         
         # see if user has a friend request to accept from this person
+        # @param friend
+        # @return [true, false]
         def friendship_to_accept?(friend)
           return false unless friendly_options.require_acceptance?
           !friendships_to_accept(friend).empty?
@@ -83,17 +91,23 @@ module DataMapper
 
         # Accepts a user object and returns true if both users are
         # friends and the friendship has been accepted.
+        # @param friend
+        # @return [true, false]
         def is_friends_with?(friend)
           !self.friendship(friend).nil?
         end        
         
         # request friendship from "friend"
+        # @param friend The friend who's friendship is being requested
+        # @return The instance of the friendship_class
         def request_friendship(friend)
           return false if friendship(friend)
           self.friendships.create(:friend => friend)
         end
         
         # Accepts a user  and updates an existing friendship to be accepted.
+        # @param friend The friend that needs to be confirmed
+        # @return [self]
         def confirm_friendship_with(friend)
           self.friendship(friend,{:accepted_at => nil}).update({:accepted_at => Time.now})
           # reload so old relationship won't be lingering in the IdentityMap
@@ -102,12 +116,14 @@ module DataMapper
         end
 
         # Accepts a user and deletes a friendship between both users.
+        # @param friend The friend who's friendship will now end
+        # @return [true, false] Outcome of model.destroy
         def end_friendship_with(friend)
           self.friendship(friend).destroy if self.is_friends_with?(friend)
         end
         
         protected
-        # Accepts a user and returns the friendship associated with both users.
+        # Accepts a user and returns the friendship instance associated with both users.
         def friendship(friend, opts = {})
           friendly_options.friendship_class.first({:conditions => ["(#{friendly_options.friendship_foreign_key} = ? AND friend_id = ?) OR (friend_id = ? AND #{friendly_options.friendship_foreign_key} = ?)", self.id, friend.id, self.id, friend.id]}.merge(opts) )
         end

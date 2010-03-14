@@ -1,19 +1,28 @@
-# path to my git clones of the latest dm-core
+# path to my git clones of the latest dm-core and extlib
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), *%w[.. ..]))
 
 require 'pathname'
 require 'rubygems'
-
-gem 'rspec', '~>1.2.9'
 require 'spec'
+
+# Add all external dependencies for the plugin here
+gem 'extlib', '~>0.9.14'
+require "extlib"
+
+gem 'dm-core', '~>0.10.2'
+require 'dm-core'
+
+gem 'dm-aggregates', '~>0.10.2'
+require "dm-aggregates"
 
 require Pathname(__FILE__).dirname.expand_path.parent + 'lib/dm-is-friendly'
 
 DataMapper::Logger.new("test.log", :debug)
+# DataMapper.logger.auto_flush = true
 
 def load_driver(name, default_uri)
-  return false if ENV['ADAPTER'] != name.to_s
-
+  return false unless DRIVERS[name]
+  
   begin
     DataMapper.setup(name, ENV["#{name.to_s.upcase}_SPEC_URI"] || default_uri)
     DataMapper::Repository.adapters[:default] = DataMapper::Repository.adapters[name]
@@ -24,12 +33,31 @@ def load_driver(name, default_uri)
   end
 end
 
-ENV['ADAPTER'] ||= 'sqlite3'
+ENV['ADAPTERS'] ||= 'sqlite3 mysql'
 
-HAS_SQLITE3  = load_driver(:sqlite3,  'sqlite3::memory:')
-HAS_MYSQL    = load_driver(:mysql,    'mysql://localhost/dm_is_friendly_test')
-HAS_POSTGRES = load_driver(:postgres, 'postgres://postgres@localhost/dm_is_friendly_test')
+DRIVERS = { 
+  :sqlite3  => 'sqlite3::memory:',
+  :mysql    => 'mysql://root:pass@localhost/dm_is_friendly_test',
+  :postgres => 'postgres://postgres@localhost/dm_is_friendly_test'
+}
+
+ADAPTERS = ENV["ADAPTERS"].split(' ')
+
+module SpecAdapterHelper
+  def with_adapters(&block)
+    ::ADAPTERS.each do |adapter|
+      describe "with #{adapter} adapter" do
+        before(:all) do
+          load_driver(adapter.to_sym, ::DRIVERS[adapter.to_sym])
+        end
+        
+        instance_eval(&block)
+      end
+    end
+  end
+end
 
 Spec::Runner.configure do |conf|
   def log(msg); DataMapper.logger.push("****** #{msg}"); end
+  conf.extend(SpecAdapterHelper)
 end

@@ -1,20 +1,17 @@
 require 'rubygems'
 require 'rake'
-require File.join(File.dirname(__FILE__), *%w[lib is version])
-
-version = DataMapper::Is::Friendly::VERSION
 
 begin
   require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "dm-is-friendly"
-    gem.summary = %Q{DataMapper plugin that adds self-referential friendship functionality to your models.}
-    gem.email = "kabari@gmail.com"
-    gem.homepage = "http://github.com/kabari/dm-is-friendly"
-    gem.authors = ["Kabari Hendrick"]
-    gem.add_dependency("extlib", "~> 0.9.14")
-    gem.add_dependency("dm-core", "~> #{version}")
-    gem.add_dependency("dm-aggregates", "~> #{version}")
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "dm-is-friendly"
+    gemspec.summary = %Q{DataMapper plugin that adds self-referential friendship functionality to your models.}
+    gemspec.email = "kabari@gmail.com"
+    gemspec.homepage = "http://github.com/kabari/dm-is-friendly"
+    gemspec.authors = ["Kabari Hendrick"]
+    gemspec.add_dependency("extlib", "~> 0.9.14")
+    gemspec.add_dependency("dm-core", "~> 0.10.2")
+    gemspec.add_dependency("dm-aggregates", "~> 0.10.2")
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -40,8 +37,18 @@ require 'rake/rdoctask'
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "dm-is-friendly #{version}"
+  rdoc.title = "dm-is-friendly 0.10.21"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new do |t|
+    t.files   = ['lib/**/*.rb', 'README.markdown', 'LICENSE']
+  end
+rescue LoadError
+  task :yard do
+    abort "YARD is not available. In order to run yardoc, you must: sudo gem install yard"
+  end
+end
