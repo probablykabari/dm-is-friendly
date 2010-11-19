@@ -9,9 +9,9 @@ begin
     gemspec.email = "kabari@gmail.com"
     gemspec.homepage = "http://github.com/kabari/dm-is-friendly"
     gemspec.authors = ["Kabari Hendrick"]
-    gemspec.add_dependency("extlib", "~> 0.9.14")
-    gemspec.add_dependency("dm-core", "~> 0.10.2")
-    gemspec.add_dependency("dm-aggregates", "~> 0.10.2")
+    gemspec.add_dependency("activesupport", "~> 3.0.0")
+    gemspec.add_dependency("dm-core", "~> 1.0.2")
+    gemspec.add_dependency("dm-aggregates", "~> 1.0.2")
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
