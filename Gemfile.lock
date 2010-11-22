@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/rails/rails.git
-  revision: 3c12ab9d78ffe9bf48669f3306a036c44750b3ac
+  revision: 28a0ee0f0c5c5fd902d71a87794d4a111a160c38
   branch: 3-0-stable
   specs:
     activesupport (3.0.3)
@@ -102,16 +102,14 @@ GEM
       sexp_processor (~> 3.0)
     roodi (2.1.0)
       ruby_parser
-    rspec (2.0.1)
-      rspec-core (~> 2.0.1)
-      rspec-expectations (~> 2.0.1)
-      rspec-mocks (~> 2.0.1)
-    rspec-core (2.0.1)
-    rspec-expectations (2.0.1)
-      diff-lcs (>= 1.1.2)
-    rspec-mocks (2.0.1)
-      rspec-core (~> 2.0.1)
-      rspec-expectations (~> 2.0.1)
+    rspec (2.1.0)
+      rspec-core (~> 2.1.0)
+      rspec-expectations (~> 2.1.0)
+      rspec-mocks (~> 2.1.0)
+    rspec-core (2.1.0)
+    rspec-expectations (2.1.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.1.0)
     ruby2ruby (1.2.5)
       ruby_parser (~> 2.0)
       sexp_processor (~> 3.0)
@@ -122,7 +120,7 @@ GEM
     sexp_processor (3.0.5)
     stringex (1.1.0)
     uuidtools (2.1.1)
-    yard (0.6.2)
+    yard (0.6.3)
     yardstick (0.2.0)
       yard (~> 0.6.1)
 
@@ -149,6 +147,6 @@ DEPENDENCIES
   rcov (~> 0.9.8)
   reek (~> 1.2.8)
   roodi (~> 2.1)
-  rspec (~> 2.0.0)
+  rspec (~> 2.1.0)
   yard (~> 0.5)
   yardstick (~> 0.1)

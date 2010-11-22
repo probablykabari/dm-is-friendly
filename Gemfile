@@ -19,7 +19,7 @@ end
 group(:development) do # Development dependencies (as in the gemspec)
 
   gem 'rake',           '~> 0.8.7'
-  gem 'rspec',          '~> 2.0.0'#, :git => 'git://github.com/snusnu/rspec', :branch => 'heckle_fix_plus_gemfile'
+  gem 'rspec',          '~> 2.1.0'#, :git => 'git://github.com/snusnu/rspec', :branch => 'heckle_fix_plus_gemfile'
   gem 'jeweler',        '~> 1.4'
   gem 'dm-aggregates',   DM_VERSION #, :git => "#{DATAMAPPER}/dm-aggregates.git"
 end
