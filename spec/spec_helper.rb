@@ -1,21 +1,21 @@
 # path to my git clones of the latest dm-core and extlib
-$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), *%w[.. ..]))
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), *%w[.. lib]))
 
 require 'pathname'
 require 'rubygems'
-require 'spec'
+require 'bundler/setup'
+
+Bundler.setup(:datamapper, :runtime, :development)
 
 # Add all external dependencies for the plugin here
-gem 'extlib', '~>0.9.14'
-require "extlib"
+# gem 'extlib', '= 1.0.2'
+# require "extlib"
 
-gem 'dm-core', '~>0.10.2'
 require 'dm-core'
-
-gem 'dm-aggregates', '~>0.10.2'
+require "dm-types"
 require "dm-aggregates"
-
-require Pathname(__FILE__).dirname.expand_path.parent + 'lib/dm-is-friendly'
+require "dm-migrations"
+require 'dm-is-friendly'
 
 DataMapper::Logger.new("test.log", :debug)
 # DataMapper.logger.auto_flush = true
@@ -36,9 +36,9 @@ end
 ENV['ADAPTERS'] ||= 'sqlite3 mysql'
 
 DRIVERS = { 
-  :sqlite3  => 'sqlite3::memory:',
-  :mysql    => 'mysql://root:pass@localhost/dm_is_friendly_test',
-  :postgres => 'postgres://postgres@localhost/dm_is_friendly_test'
+  :sqlite  => 'sqlite3::memory:',
+  :mysql    => 'mysql://datamapper:datamapper@localhost/dm_is_friendly_test',
+  :postgres => 'postgres://postgres:postgres@localhost/dm_is_friendly_test'
 }
 
 ADAPTERS = ENV["ADAPTERS"].split(' ')

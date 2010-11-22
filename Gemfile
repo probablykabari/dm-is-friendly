@@ -12,16 +12,16 @@ group :runtime do # Runtime dependencies (as in the gemspec)
     gem 'activesupport', '~> 3.0.0',  :git => 'git://github.com/rails/rails.git', :branch => '3-0-stable', :require => nil
   end
 
-  gem 'dm-core',         DM_VERSION, :git => "#{DATAMAPPER}/dm-core.git"
-
+  gem 'dm-core',         DM_VERSION#, :git => "#{DATAMAPPER}/dm-core.git"
+  gem "dm-types",        DM_VERSION #, :git => "#{DATAMAPPER}/dm-types.git"
 end
 
 group(:development) do # Development dependencies (as in the gemspec)
 
   gem 'rake',           '~> 0.8.7'
-  gem 'rspec',          '~> 1.3', :git => 'git://github.com/snusnu/rspec', :branch => 'heckle_fix_plus_gemfile'
+  gem 'rspec',          '~> 1.3'#, :git => 'git://github.com/snusnu/rspec', :branch => 'heckle_fix_plus_gemfile'
   gem 'jeweler',        '~> 1.4'
-
+  gem 'dm-aggregates',   DM_VERSION #, :git => "#{DATAMAPPER}/dm-aggregates.git"
 end
 
 group :quality do # These gems contain rake tasks that check the quality of the source code
@@ -42,32 +42,31 @@ group :datamapper do # We need this because we want to pin these dependencies to
 
   DO_VERSION     = '~> 0.10.2'
   # DM_DO_ADAPTERS = %w[ sqlite postgres mysql oracle sqlserver ]
-  DM_DO_ADAPTERS = %w[mysql sqlite]
+  DM_DO_ADAPTERS = %w[mysql sqlite postgres]
 
   if (do_adapters = DM_DO_ADAPTERS & adapters).any?
     options = {}
     options[:git] = "#{DATAMAPPER}/do.git" if ENV['DO_GIT'] == 'true'
 
-    gem 'data_objects',  DO_VERSION, options.dup
+    gem 'data_objects',  DO_VERSION#, options.dup
 
     do_adapters.each do |adapter|
       adapter = 'sqlite3' if adapter == 'sqlite'
-      gem "do_#{adapter}", DO_VERSION, options.dup
+      gem "do_#{adapter}", DO_VERSION#, options.dup
     end
 
-    gem 'dm-do-adapter', DM_VERSION, :git => "#{DATAMAPPER}/dm-do-adapter.git"
+    gem 'dm-do-adapter', DM_VERSION#, :git => "#{DATAMAPPER}/dm-do-adapter.git"
   end
 
   adapters.each do |adapter|
-    gem "dm-#{adapter}-adapter", DM_VERSION, :git => "#{DATAMAPPER}/dm-#{adapter}-adapter.git"
+    gem "dm-#{adapter}-adapter", DM_VERSION#, :git => "#{DATAMAPPER}/dm-#{adapter}-adapter.git"
   end
 
   plugins = ENV['PLUGINS'] || ENV['PLUGIN']
   plugins = plugins.to_s.tr(',', ' ').split.push('dm-migrations').uniq
 
   plugins.each do |plugin|
-    gem plugin, DM_VERSION, :git => "#{DATAMAPPER}/#{plugin}.git"
+    gem plugin, DM_VERSION#, :git => "#{DATAMAPPER}/#{plugin}.git"
   end
 
-  gem 'dm-aggregates', :git => "#{DATAMAPPER}/dm-aggregates.git"
 end

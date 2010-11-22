@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'spec_helper'
 
 class Friendship
   include DataMapper::Resource
@@ -103,8 +103,10 @@ describe 'DataMapper::Is::Friendly' do
       it "should not be added twice" do
         lambda do
           @joe.request_friendship(@quentin)
-          @joe.should have(1).friends
-          @quentin.should have(1).friends
+          #@joe.should have(1).friends
+          #@quentin.should have(1).friends
+          @joe.friends.size.should == 1
+          @quentin.friends.size.should ==1
         end.should_not change(Friendship,:count)
       end
 
@@ -165,8 +167,11 @@ describe 'DataMapper::Is::Friendly' do
       it "should not be added twice" do
         lambda do
           @joe.request_friendship(@quentin)
-          @joe.should have(1).friends
-          @quentin.should have(1).friends
+          # @joe.should have(1).friends
+          # @quentin.should have(1).friends
+          @joe.friends.size.should == 1
+          @quentin.friends.size.should ==1
+          
         end.should_not change(Homie,:count)
       end
 
