@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'rake'
+require 'rake/rdoctask'
+require 'rspec/core/rake_task'
 
 begin
   require 'jeweler'
@@ -7,37 +9,32 @@ begin
     gemspec.name = "dm-is-friendly"
     gemspec.summary = %Q{DataMapper plugin that adds self-referential friendship functionality to your models.}
     gemspec.email = "kabari@gmail.com"
-    gemspec.homepage = "http://github.com/kabari/dm-is-friendly"
+    gemspec.homepage = "http://github.com/RipTheJacker/dm-is-friendly"
     gemspec.authors = ["Kabari Hendrick"]
     gemspec.add_dependency("activesupport", "~> 3.0.0")
     gemspec.add_dependency("dm-core", "~> 1.0.2")
-    gemspec.add_dependency("dm-aggregates", "~> 1.0.2")
+    gemspec.add_dependency("dm-types", "~> 1.0.2")
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
+RSpec::Core::RakeTask.new(:spec)
 
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
-  spec.rcov = true
+RSpec::Core::RakeTask.new(:rcov) do |t|
+  t.rcov = true
+  t.rcov_opts =  %[-Ilib -Ispec --exclude "spec/spec_helper.rb"]
+  t.rcov_opts << %[--no-html --aggregate coverage.data]
 end
 
 
 task :default => :spec
 
-require 'rake/rdoctask'
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "dm-is-friendly 0.10.21"
+  rdoc.title = "dm-is-friendly 1.0.2"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

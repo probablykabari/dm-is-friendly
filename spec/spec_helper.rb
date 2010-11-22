@@ -57,7 +57,7 @@ module SpecAdapterHelper
   end
 end
 
-Spec::Runner.configure do |conf|
+RSpec.configure do |conf|
   def log(msg); DataMapper.logger.push("****** #{msg}"); end
   conf.extend(SpecAdapterHelper)
 end
