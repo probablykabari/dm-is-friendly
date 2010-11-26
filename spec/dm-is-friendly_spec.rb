@@ -16,7 +16,7 @@ class Gangster
 end
 
 describe 'DataMapper::Is::Friendly' do
-  it "should have proper options set", :focus => true do
+  it "should have proper options set" do
     Person.friendly_config.friendship_class.should == Friendship
     Person.friendly_config.reference_model.should     == Person
     Person.friendly_config.friendship_foreign_key.should == :person_id
@@ -25,7 +25,7 @@ describe 'DataMapper::Is::Friendly' do
 
   with_adapters do
   
-    describe "with friendships", :focus => true do
+    describe "with friendships" do
       before(:all) do
         DataMapper.auto_migrate!         
         @quentin = Person.create(:name => "quentin")
@@ -89,7 +89,6 @@ describe 'DataMapper::Is::Friendly' do
   
       it "should be able to delete friendships" do
         lambda do
-          # joe sleeps with quentin's wife perhaps
           @quentin.end_friendship_with(@joe)
         end.should change(Friendship,:count)
     
@@ -152,7 +151,6 @@ describe 'DataMapper::Is::Friendly' do
   
       it "should be able to delete friendships" do
         lambda do
-          # joe sleeps with quentin's wife perhaps
           @quentin.end_friendship_with(@joe)
         end.should change(Initiation,:count)
     

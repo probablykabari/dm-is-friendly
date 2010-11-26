@@ -17,9 +17,6 @@ require "dm-aggregates"
 require "dm-migrations"
 require 'dm-is-friendly'
 
-# DataMapper::Logger.new("test.log", :debug)
-# DataMapper.logger.auto_flush = true
-
 ENV['ADAPTERS'] ||= 'sqlite mysql postgres'
 ENV['LOG'] ||= "file"
 
@@ -70,7 +67,6 @@ end
 
 RSpec.configure do |config|
   
-  # config.filter_run :focus => true
   config.extend( DataMapper::Spec::Adapters::Helpers)
   config.extend(SpecAdapterHelper)
   
