@@ -68,31 +68,11 @@ module SpecAdapterHelper
 
 end
 
-module RemixableHelper
-
-  def clear_remixed_models(*models)
-    models.each do |model|
-      deepest_context, removable_const = (model =~ /^(.*::)(.*)$/) ? [$1, $2] : ["Object", model]
-
-      if Object.full_const_defined?(model)
-        if Object.full_const_defined?(deepest_context)
-          deepest_context = Object.full_const_get(deepest_context)
-          deepest_context.send(:remove_const, removable_const)
-        end
-      end
-    end
-  end
-
-  alias :clear_remixed_model :clear_remixed_models
-
-end
-
 RSpec.configure do |config|
   
   # config.filter_run :focus => true
   config.extend( DataMapper::Spec::Adapters::Helpers)
   config.extend(SpecAdapterHelper)
-  config.include(RemixableHelper)
   
   config.after :all do
     DataMapper::Spec.cleanup_models

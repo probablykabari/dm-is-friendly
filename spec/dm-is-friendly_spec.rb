@@ -1,45 +1,22 @@
 require 'spec_helper'
 
-# class Friendship
-#   include DataMapper::Resource
-#   property :person_id, Integer, :key => true
-#   property :friend_id, Integer, :key => true
-#   property :accepted_at, DateTime
-# 
-#   belongs_to :person
-#   belongs_to :friend, :model => "Person", :child_key => [:friend_id]
-# 
-# end
-
 class Person
   include DataMapper::Resource
   property :id, Serial
   property :name, String
-  property :deleted_at, ParanoidDateTime
 
   is :friendly
 end
 
-# new classes
-# class Homie
-#   include DataMapper::Resource
-#   property :gangster_id, Integer, :key => true
-#   property :friend_id, Integer, :key => true
-# 
-#   belongs_to :gangster
-#   belongs_to :friend, :model => "Gangster", :child_key => [:friend_id]
-# 
-# end
-# 
 class Gangster
   include DataMapper::Resource
   property :id, Serial
   property :name, String
-  is :friendly, :friendship_class => "Homie", :require_acceptance => false
+  is :friendly, :friendship_class => "Initiation", :require_acceptance => false
 end
 
 describe 'DataMapper::Is::Friendly' do
-  it "should have proper options set" do
+  it "should have proper options set", :focus => true do
     Person.friendly_config.friendship_class.should == Friendship
     Person.friendly_config.reference_model.should     == Person
     Person.friendly_config.friendship_foreign_key.should == :person_id
@@ -48,7 +25,6 @@ describe 'DataMapper::Is::Friendly' do
 
   with_adapters do
   
-
     describe "with friendships", :focus => true do
       before(:all) do
         DataMapper.auto_migrate!         
@@ -138,7 +114,7 @@ describe 'DataMapper::Is::Friendly' do
       it "should work" do
         lambda do
           @joe.request_friendship(@quentin)
-        end.should change(Homie, :count).by(1)
+        end.should change(Initiation, :count).by(1)
       end
   
       it "should recognize every friend request" do
@@ -165,7 +141,7 @@ describe 'DataMapper::Is::Friendly' do
           @joe.should have(1).friends
           @quentin.should have(1).friends
           
-        end.should_not change(Homie,:count)
+        end.should_not change(Initiation,:count)
       end
 
       it "should be able to have multiple friends" do
@@ -178,7 +154,7 @@ describe 'DataMapper::Is::Friendly' do
         lambda do
           # joe sleeps with quentin's wife perhaps
           @quentin.end_friendship_with(@joe)
-        end.should change(Homie,:count)
+        end.should change(Initiation,:count)
     
         @quentin.reload; @joe.reload
     
