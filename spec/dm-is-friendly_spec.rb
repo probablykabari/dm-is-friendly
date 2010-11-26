@@ -5,10 +5,10 @@ class Friendship
   property :person_id, Integer, :key => true
   property :friend_id, Integer, :key => true
   property :accepted_at, DateTime
-  
+
   belongs_to :person
   belongs_to :friend, :model => "Person", :child_key => [:friend_id]
-  
+
 end
 
 class Person
@@ -16,7 +16,7 @@ class Person
   property :id, Serial
   property :name, String
   property :deleted_at, ParanoidDateTime
-  
+
   is :friendly
 end
 
@@ -39,25 +39,22 @@ class Gangster
 end
 
 describe 'DataMapper::Is::Friendly' do
+  it "should have proper options set" do
+    Person.friendly_config.friendship_class.should == Friendship
+    Person.friendly_config.reference_model.should     == Person
+    Person.friendly_config.friendship_foreign_key.should == :person_id
+    Person.friendly_config.require_acceptance?.should == true
+  end
+
   with_adapters do
-    before(:all) do
-      Friendship.auto_migrate!; Person.auto_migrate!
-    end
   
-    it "should have proper options set" do
-      Person.friendly_options.friendship_class.should == Friendship
-      Person.friendly_options.friend_class.should     == Person
-      Person.friendly_options.friendship_foreign_key.should == :person_id
-      Person.friendly_options.require_acceptance?.should == true
-    end
 
     describe "with friendships" do
       before(:all) do
-        Friendship.auto_migrate!; Person.auto_migrate!
-    
+        DataMapper.auto_migrate!         
         @quentin = Person.create(:name => "quentin")
-        @aaron = Person.create(:name => "aaron") # state: "pending"
-        @joe = Person.create(:name => "joe")
+        @aaron   = Person.create(:name => "aaron")
+        @joe     = Person.create(:name => "joe")
       end
     
       it "should work" do
@@ -103,10 +100,8 @@ describe 'DataMapper::Is::Friendly' do
       it "should not be added twice" do
         lambda do
           @joe.request_friendship(@quentin)
-          #@joe.should have(1).friends
-          #@quentin.should have(1).friends
-          @joe.friends.size.should == 1
-          @quentin.friends.size.should ==1
+          @joe.should have(1).friends
+          @quentin.should have(1).friends
         end.should_not change(Friendship,:count)
       end
 
@@ -133,7 +128,7 @@ describe 'DataMapper::Is::Friendly' do
 
     describe "without requiring acceptance" do
       before(:all) do
-        Homie.auto_migrate!; Gangster.auto_migrate!
+        DataMapper.auto_migrate!
     
         @quentin = Gangster.create(:name => "quentin")
         @aaron = Gangster.create(:name => "aaron") # state: "pending"
@@ -167,10 +162,8 @@ describe 'DataMapper::Is::Friendly' do
       it "should not be added twice" do
         lambda do
           @joe.request_friendship(@quentin)
-          # @joe.should have(1).friends
-          # @quentin.should have(1).friends
-          @joe.friends.size.should == 1
-          @quentin.friends.size.should ==1
+          @joe.should have(1).friends
+          @quentin.should have(1).friends
           
         end.should_not change(Homie,:count)
       end

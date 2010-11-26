@@ -5,8 +5,9 @@ module DataMapper
       
       def is_friendly(options = {})
         options = {:require_acceptance => true, :friendship_class => "Friendship" }.merge(options)
-        @friendly_options = FriendlyConfig.new(self, options)        
-        def self.friendly_options; @friendly_options; end
+        @friendly_config = FriendlyConfig.new(self, options)        
+        def self.friendly_config; @friendly_config; end
+        
         
         class_eval(<<-RUBY,(__FILE__),(__LINE__+1)
         has n, :friendships, :model => #{options[:friendship_class]}
@@ -21,12 +22,12 @@ module DataMapper
       
       # This class holds the configuration options for the plugin.
       class FriendlyConfig
-        attr_reader :friend_class, :friendship_foreign_key, :friend_foreign_key
+        attr_reader :reference_model, :friendship_foreign_key, :friend_foreign_key
         
         def initialize(klazz, opts)
-          @friend_class           = klazz
+          @reference_model           = klazz
           @friendship_class_name  = opts[:friendship_class]
-          @friendship_foreign_key = Extlib::Inflection.foreign_key(@friend_class.name).to_sym
+          @friendship_foreign_key = Extlib::Inflection.foreign_key(@reference_model.name).to_sym
           @friend_foreign_key     = Extlib::Inflection.foreign_key(@friendship_class_name).to_sym
           @require_acceptance     = opts[:require_acceptance]
         end
@@ -57,8 +58,8 @@ module DataMapper
           friend_acceptance_condition(conditions, include_accepted)
           friend_scope_condition(conditions, friend)
           
-          conditions[friendly_options.friendship_foreign_key] = self.id
-          friendly_options.friendship_class.all(conditions).friend
+          conditions[friendly_config.friendship_foreign_key] = self.id
+          friendly_config.friendship_class.all(conditions).friend
         end
                 
         # returns all the people that have requested my friendship
@@ -71,7 +72,7 @@ module DataMapper
           friend_scope_condition(conditions, friend, true)
           
           conditions[:friend_id] = self.id                      
-          friendly_options.friendship_class.all(conditions).send(friendly_options.friend_class.name.downcase)
+          friendly_config.friendship_class.all(conditions).send(friendly_config.reference_model.name.downcase)
         end
         
         # see if there is a pending friendship request from this person to another
@@ -85,7 +86,7 @@ module DataMapper
         # @param friend
         # @return [true, false]
         def friendship_to_accept?(friend)
-          return false unless friendly_options.require_acceptance?
+          return false unless friendly_config.require_acceptance?
           !friendships_to_accept(friend).empty?
         end
 
@@ -125,19 +126,19 @@ module DataMapper
         protected
         # Accepts a user and returns the friendship instance associated with both users.
         def friendship(friend, opts = {})
-          friendly_options.friendship_class.first({:conditions => ["(#{friendly_options.friendship_foreign_key} = ? AND friend_id = ?) OR (friend_id = ? AND #{friendly_options.friendship_foreign_key} = ?)", self.id, friend.id, self.id, friend.id]}.merge(opts) )
+          friendly_config.friendship_class.first({:conditions => ["(#{friendly_config.friendship_foreign_key} = ? AND friend_id = ?) OR (friend_id = ? AND #{friendly_config.friendship_foreign_key} = ?)", self.id, friend.id, self.id, friend.id]}.merge(opts) )
         end
         
-        def friendly_options; self.class.friendly_options; end                
+        def friendly_config; self.class.friendly_config; end                
         
         private
         def friend_acceptance_condition(conditions, accepted = false)
-          accepted ? (conditions[:accepted_at.not] = nil) : (conditions[:accepted_at] = nil) if friendly_options.require_acceptance?
+          accepted ? (conditions[:accepted_at.not] = nil) : (conditions[:accepted_at] = nil) if friendly_config.require_acceptance?
         end
         
         def friend_scope_condition(conditions, friend = nil, for_me = false)
           return unless friend
-          key_name = for_me ? friendly_options.friendship_foreign_key : :friend_id
+          key_name = for_me ? friendly_config.friendship_foreign_key : :friend_id
           conditions[key_name] = friend.id
           conditions[:limit] = 1
         end

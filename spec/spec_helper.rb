@@ -1,24 +1,36 @@
 # path to my git clones of the latest dm-core and extlib
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), *%w[.. lib]))
 
-require 'pathname'
 require 'rubygems'
 require 'bundler/setup'
 
 Bundler.setup(:datamapper, :runtime, :development)
 
 # Add all external dependencies for the plugin here
-# gem 'extlib', '= 1.0.2'
-# require "extlib"
 
 require 'dm-core'
+require 'dm-core/spec/setup'
+require "dm-core/spec/lib/adapter_helpers"
+require "dm-core/spec/lib/spec_helper"
 require "dm-types"
 require "dm-aggregates"
 require "dm-migrations"
 require 'dm-is-friendly'
 
-DataMapper::Logger.new("test.log", :debug)
+# DataMapper::Logger.new("test.log", :debug)
 # DataMapper.logger.auto_flush = true
+
+ENV['ADAPTERS'] ||= 'sqlite mysql postgres'
+ENV['LOG'] ||= "file"
+
+
+ADAPTERS = ENV["ADAPTERS"].split(' ')
+
+DRIVERS = { 
+  :sqlite  => 'sqlite3::memory:',
+  :mysql    => 'mysql://datamapper:datamapper@localhost/dm_is_friendly_test',
+  :postgres => 'postgres://postgres:postgres@localhost/dm_is_friendly_test'
+}
 
 def load_driver(name, default_uri)
   return false unless DRIVERS[name]
@@ -33,16 +45,6 @@ def load_driver(name, default_uri)
   end
 end
 
-ENV['ADAPTERS'] ||= 'sqlite3 mysql'
-
-DRIVERS = { 
-  :sqlite  => 'sqlite3::memory:',
-  :mysql    => 'mysql://datamapper:datamapper@localhost/dm_is_friendly_test',
-  :postgres => 'postgres://postgres:postgres@localhost/dm_is_friendly_test'
-}
-
-ADAPTERS = ENV["ADAPTERS"].split(' ')
-
 module SpecAdapterHelper
   def with_adapters(&block)
     ::ADAPTERS.each do |adapter|
@@ -55,9 +57,29 @@ module SpecAdapterHelper
       end
     end
   end
+  
+  def self.extended(base)
+    base.class_eval do      
+      def log(msg)
+        DataMapper.logger.push("****** #{msg}")
+      end
+    end
+  end
+
 end
 
-RSpec.configure do |conf|
-  def log(msg); DataMapper.logger.push("****** #{msg}"); end
-  conf.extend(SpecAdapterHelper)
+RSpec.configure do |config|
+  
+  
+  config.extend( DataMapper::Spec::Adapters::Helpers)
+  config.extend(SpecAdapterHelper)
+  
+  config.after :all do
+    DataMapper::Spec.cleanup_models
+  end
+
+  config.after :all do
+    # global ivar cleanup
+    DataMapper::Spec.remove_ivars(self, instance_variables.reject { |ivar| ivar[0, 2] == '@_' })
+  end
 end
