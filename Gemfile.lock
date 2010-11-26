@@ -1,4 +1,55 @@
 GIT
+  remote: git://github.com/datamapper/dm-aggregates.git
+  revision: d683f9aec500fd6b7b276bdb00576198b10d6d16
+  specs:
+    dm-aggregates (1.0.2)
+      dm-core (~> 1.0.2)
+
+GIT
+  remote: git://github.com/datamapper/dm-core.git
+  revision: e38624bee2807a3be768c29ef664aa6ad0c10011
+  specs:
+    dm-core (1.0.2)
+      addressable (~> 2.2)
+      extlib (~> 0.9.15)
+
+GIT
+  remote: git://github.com/datamapper/dm-do-adapter.git
+  revision: c68e4c9a307b2799903baff6b3d452c1ece400e3
+  specs:
+    dm-do-adapter (1.0.2)
+      data_objects (~> 0.10.2)
+      dm-core (~> 1.0.2)
+
+GIT
+  remote: git://github.com/datamapper/dm-migrations.git
+  revision: 14941d4a6d652f6067c727b8c5f01d83460edabb
+  specs:
+    dm-migrations (1.0.2)
+      activesupport (~> 3.0.0)
+      dm-core (~> 1.0.2)
+      dm-core (~> 1.0.2)
+
+GIT
+  remote: git://github.com/datamapper/dm-sqlite-adapter.git
+  revision: be5eb74de8ce118d761f4fc55f3e5c3eb3b92315
+  specs:
+    dm-sqlite-adapter (1.0.2)
+      dm-do-adapter (~> 1.0.2)
+      do_sqlite3 (~> 0.10.2)
+
+GIT
+  remote: git://github.com/datamapper/dm-types.git
+  revision: 9a880a519f14e7c24c533021111516559916578d
+  specs:
+    dm-types (1.0.2)
+      dm-core (~> 1.0.2)
+      fastercsv (~> 1.5.3)
+      json_pure (~> 1.4)
+      stringex (~> 1.1.0)
+      uuidtools (~> 2.1.1)
+
+GIT
   remote: git://github.com/rails/rails.git
   revision: 28a0ee0f0c5c5fd902d71a87794d4a111a160c38
   branch: 3-0-stable
@@ -24,35 +75,6 @@ GEM
     data_objects (0.10.2)
       addressable (~> 2.1)
     diff-lcs (1.1.2)
-    dm-aggregates (1.0.2)
-      dm-core (~> 1.0.2)
-    dm-core (1.0.2)
-      addressable (~> 2.2)
-      extlib (~> 0.9.15)
-    dm-do-adapter (1.0.2)
-      data_objects (~> 0.10.2)
-      dm-core (~> 1.0.2)
-    dm-migrations (1.0.2)
-      dm-core (~> 1.0.2)
-    dm-mysql-adapter (1.0.2)
-      dm-do-adapter (~> 1.0.2)
-      do_mysql (~> 0.10.2)
-    dm-postgres-adapter (1.0.2)
-      dm-do-adapter (~> 1.0.2)
-      do_postgres (~> 0.10.2)
-    dm-sqlite-adapter (1.0.2)
-      dm-do-adapter (~> 1.0.2)
-      do_sqlite3 (~> 0.10.2)
-    dm-types (1.0.2)
-      dm-core (~> 1.0.2)
-      fastercsv (~> 1.5.3)
-      json_pure (~> 1.4)
-      stringex (~> 1.1.0)
-      uuidtools (~> 2.1.1)
-    do_mysql (0.10.2)
-      data_objects (= 0.10.2)
-    do_postgres (0.10.2)
-      data_objects (= 0.10.2)
     do_sqlite3 (0.10.2)
       data_objects (= 0.10.2)
     extlib (0.9.15)
@@ -130,16 +152,12 @@ PLATFORMS
 DEPENDENCIES
   activesupport (~> 3.0.0)!
   data_objects (~> 0.10.2)
-  dm-aggregates (~> 1.0.2)
-  dm-core (~> 1.0.2)
-  dm-do-adapter (~> 1.0.2)
-  dm-migrations (~> 1.0.2)
-  dm-mysql-adapter (~> 1.0.2)
-  dm-postgres-adapter (~> 1.0.2)
-  dm-sqlite-adapter (~> 1.0.2)
-  dm-types (~> 1.0.2)
-  do_mysql (~> 0.10.2)
-  do_postgres (~> 0.10.2)
+  dm-aggregates (~> 1.0.2)!
+  dm-core (~> 1.0.2)!
+  dm-do-adapter (~> 1.0.2)!
+  dm-migrations (~> 1.0.2)!
+  dm-sqlite-adapter (~> 1.0.2)!
+  dm-types (~> 1.0.2)!
   do_sqlite3 (~> 0.10.2)
   jeweler (~> 1.4)
   metric_fu (~> 1.3)

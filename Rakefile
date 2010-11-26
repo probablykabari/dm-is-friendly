@@ -11,13 +11,18 @@ begin
     gemspec.email = "kabari@gmail.com"
     gemspec.homepage = "http://github.com/RipTheJacker/dm-is-friendly"
     gemspec.authors = ["Kabari Hendrick"]
-    gemspec.add_dependency("activesupport", "~> 3.0.0")
+    
+    gemspec.has_rdoc    = 'yard'
+    
+    gemspec.add_development_dependency("rspec", "~> 2.1.0")
+    gemspec.add_development_dependency("jeweler")
     gemspec.add_dependency("dm-core", "~> 1.0.2")
-    gemspec.add_dependency("dm-types", "~> 1.0.2")
   end
   Jeweler::GemcutterTasks.new
-rescue LoadError
+rescue LoadError => e
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
+  puts "-"*40
+  puts e.backtrace
 end
 
 RSpec::Core::RakeTask.new(:spec)
@@ -37,6 +42,20 @@ Rake::RDocTask.new do |rdoc|
   rdoc.title = "dm-is-friendly 1.0.2"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+begin
+  require 'reek/adapters/rake_task'
+
+  Reek::RakeTask.new do |t|
+    t.fail_on_error = true
+    t.verbose       = false
+    t.source_files  = 'lib/**/*.rb'
+  end
+rescue LoadError
+  task :reek do
+    abort 'Reek is not available. In order to run reek, you must: gem install reek'
+  end
 end
 
 begin
