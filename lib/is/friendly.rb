@@ -4,18 +4,31 @@ module DataMapper
     module Friendly
       
       def is_friendly(options = {})
-        options = {:require_acceptance => true, :friendship_class => "Friendship" }.merge(options)
+        options = {:require_acceptance => true, :through => "Friendship" }.merge(options)
         @friendly_config = FriendlyConfig.new(self, options)        
         def self.friendly_config; @friendly_config; end
         
+        # Object.full_const_set(options[:friendship_class], Class.new)
         
-        class_eval(<<-RUBY,(__FILE__),(__LINE__+1)
-        has n, :friendships, :model => #{options[:friendship_class]}
-        has n, :friends_by_me, :through => :friendships, :model => "#{self.name}", :via => :#{self.name.downcase}
-        has n, :friended_by, :through => :friendships, :model => "#{self.name}",
-                             :via => :#{self.name.downcase}
-        RUBY
-        )
+        reference_model      = self
+        reference_model_name = self.name.downcase.to_sym
+        # through_model        = Object.full_const_get(options[:friendship_class])
+        
+        Object.full_const_set(options[:through], DataMapper::Model.new do
+          if options[:require_acceptance]
+            property :accepted_at, DateTime
+          end
+        
+          belongs_to reference_model_name, reference_model, :key => true
+          belongs_to :friend, :model => reference_model, :child_key => [:friend_id], :key => true
+        end)
+        
+        # class_eval(<<-RUBY,(__FILE__),(__LINE__+1)
+        has n, :friendships, :model => options[:through]
+        has n, :friends_by_me, self, :through => :friendships, :via => reference_model_name
+        has n, :friended_by,   self, :through => :friendships, :via => reference_model_name
+        # RUBY
+        # )
         
         include DataMapper::Is::Friendly::InstanceMethods
       end
@@ -26,7 +39,7 @@ module DataMapper
         
         def initialize(klazz, opts)
           @reference_model           = klazz
-          @friendship_class_name  = opts[:friendship_class]
+          @friendship_class_name  = opts[:through]
           @friendship_foreign_key = Extlib::Inflection.foreign_key(@reference_model.name).to_sym
           @friend_foreign_key     = Extlib::Inflection.foreign_key(@friendship_class_name).to_sym
           @require_acceptance     = opts[:require_acceptance]

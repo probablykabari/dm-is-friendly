@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-class Friendship
-  include DataMapper::Resource
-  property :person_id, Integer, :key => true
-  property :friend_id, Integer, :key => true
-  property :accepted_at, DateTime
-
-  belongs_to :person
-  belongs_to :friend, :model => "Person", :child_key => [:friend_id]
-
-end
+# class Friendship
+#   include DataMapper::Resource
+#   property :person_id, Integer, :key => true
+#   property :friend_id, Integer, :key => true
+#   property :accepted_at, DateTime
+# 
+#   belongs_to :person
+#   belongs_to :friend, :model => "Person", :child_key => [:friend_id]
+# 
+# end
 
 class Person
   include DataMapper::Resource
@@ -21,16 +21,16 @@ class Person
 end
 
 # new classes
-class Homie
-  include DataMapper::Resource
-  property :gangster_id, Integer, :key => true
-  property :friend_id, Integer, :key => true
-
-  belongs_to :gangster
-  belongs_to :friend, :model => "Gangster", :child_key => [:friend_id]
-
-end
-
+# class Homie
+#   include DataMapper::Resource
+#   property :gangster_id, Integer, :key => true
+#   property :friend_id, Integer, :key => true
+# 
+#   belongs_to :gangster
+#   belongs_to :friend, :model => "Gangster", :child_key => [:friend_id]
+# 
+# end
+# 
 class Gangster
   include DataMapper::Resource
   property :id, Serial
@@ -49,7 +49,7 @@ describe 'DataMapper::Is::Friendly' do
   with_adapters do
   
 
-    describe "with friendships" do
+    describe "with friendships", :focus => true do
       before(:all) do
         DataMapper.auto_migrate!         
         @quentin = Person.create(:name => "quentin")
