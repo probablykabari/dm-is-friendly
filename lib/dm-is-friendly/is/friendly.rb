@@ -34,8 +34,8 @@ module DataMapper
         def initialize(klazz, opts)
           @reference_model           = klazz
           @friendship_class_name  = opts[:friendship_class]
-          @friendship_foreign_key = Extlib::Inflection.foreign_key(@reference_model.name).to_sym
-          @friend_foreign_key     = Extlib::Inflection.foreign_key(@friendship_class_name).to_sym
+          @friendship_foreign_key = DataMapper::Inflector.foreign_key(@reference_model.name).to_sym
+          @friend_foreign_key     = DataMapper::Inflector.foreign_key(@friendship_class_name).to_sym
           @require_acceptance     = opts[:require_acceptance]
         end
         
