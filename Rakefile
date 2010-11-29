@@ -13,7 +13,8 @@ begin
     gemspec.authors = ["Kabari Hendrick"]
     
     gemspec.has_rdoc    = 'yard'
-    
+    gemspec.files = Dir['Rakefile', '{lib,spec}/**/*', 'README*', 'LICENSE*', 'VERSION'] - ['spec/log/dm.log']
+                      
     gemspec.add_development_dependency("rspec", "~> 2.1.0")
     gemspec.add_development_dependency("jeweler")
     gemspec.add_dependency("dm-core", "~> 1.0.2")
