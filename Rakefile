@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'rake'
 require 'rake/rdoctask'
-require 'rspec/core/rake_task'
 
 begin
   require 'jeweler'
@@ -26,13 +25,21 @@ rescue LoadError => e
   puts e.backtrace
 end
 
-RSpec::Core::RakeTask.new(:spec)
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec)
 
-RSpec::Core::RakeTask.new(:rcov) do |t|
-  t.rcov = true
-  t.rcov_opts =  %[-Ilib -Ispec --exclude "spec/spec_helper.rb"]
-  t.rcov_opts << %[--no-html --aggregate coverage.data]
+  RSpec::Core::RakeTask.new(:rcov) do |t|
+    t.rcov = true
+    t.rcov_opts =  %[-Ilib -Ispec --exclude "spec/spec_helper.rb"]
+    t.rcov_opts << %[--no-html --aggregate coverage.data]
+  end  
+rescue LoadError
+  task :spec do
+    abort "RSpec gem is not available. In order to test use: bundle install"
+  end
 end
+
 
 
 task :default => :spec
@@ -55,7 +62,7 @@ begin
   end
 rescue LoadError
   task :reek do
-    abort 'Reek is not available. In order to run reek, you must: gem install reek'
+    abort 'Reek is not available. In order to run reek, you must: bundle install'
   end
 end
 
@@ -66,6 +73,6 @@ begin
   end
 rescue LoadError
   task :yard do
-    abort "YARD is not available. In order to run yardoc, you must: sudo gem install yard"
+    abort "YARD is not available. In order to run yardoc, you must: bundle install"
   end
 end

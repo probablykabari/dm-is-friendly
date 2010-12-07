@@ -58,7 +58,7 @@ module DataMapper
         # returns all of the friends this person has that are accepted
         # @return [DataMapper::Collection] All the person's friends
         def friends
-          friendship_requests(nil,true).union(friendships_to_accept(nil,true))
+          friendship_requests(nil,true) | friendships_to_accept(nil,true)
         end
                 
         # returns all the people I have requested frienship from
