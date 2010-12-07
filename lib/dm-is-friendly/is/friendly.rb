@@ -9,18 +9,23 @@ module DataMapper
         def self.friendly_config; @friendly_config; end
                 
         reference_model      = self
-        reference_model_name = self.name.downcase.to_sym
+        reference_model_name = DataMapper::Inflector.demodulize(self.name).downcase.to_sym
         
-        Object.full_const_set(options[:friendship_class], DataMapper::Model.new do
-          if options[:require_acceptance]
-            property :accepted_at, DateTime
+        Object.full_const_set(options[:friendship_class], 
+          DataMapper::Model.new do
+            if options[:require_acceptance]
+              property :accepted_at, DateTime
+            end
+        
+            belongs_to reference_model_name, reference_model, :key => true
+            belongs_to :friend, :model => reference_model, :child_key => [:friend_id], :key => true
           end
+        )
         
-          belongs_to reference_model_name, reference_model, :key => true
-          belongs_to :friend, :model => reference_model, :child_key => [:friend_id], :key => true
-        end)
+        friendship_class = Object.full_const_get(options[:friendship_class])
         
         has n, :friendships, :model => options[:friendship_class]
+        
         has n, :friends_by_me, self, :through => :friendships, :via => reference_model_name
         has n, :friended_by,   self, :through => :friendships, :via => reference_model_name
         
@@ -32,7 +37,7 @@ module DataMapper
         attr_reader :reference_model, :friendship_foreign_key, :friend_foreign_key
         
         def initialize(klazz, opts)
-          @reference_model           = klazz
+          @reference_model        = klazz
           @friendship_class_name  = opts[:friendship_class]
           @friendship_foreign_key = DataMapper::Inflector.foreign_key(@reference_model.name).to_sym
           @friend_foreign_key     = DataMapper::Inflector.foreign_key(@friendship_class_name).to_sym

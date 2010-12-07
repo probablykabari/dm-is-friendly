@@ -1,31 +1,67 @@
 require 'spec_helper'
 
-class Person
-  include DataMapper::Resource
-  property :id, Serial
-  property :name, String
+describe DataMapper::Is::Friendly do
+  before(:all) do
+    class Person
+      include DataMapper::Resource
+      property :id, Serial
+      property :name, String
 
-  is :friendly
-end
+      is :friendly
+    end
 
-class Gangster
-  include DataMapper::Resource
-  property :id, Serial
-  property :name, String
-  is :friendly, :friendship_class => "Initiation", :require_acceptance => false
-end
-
-describe 'DataMapper::Is::Friendly' do
-  it "should have proper options set" do
-    Person.friendly_config.friendship_class.should == Friendship
-    Person.friendly_config.reference_model.should     == Person
-    Person.friendly_config.friendship_foreign_key.should == :person_id
-    Person.friendly_config.require_acceptance?.should == true
+    class Member
+      include DataMapper::Resource
+      property :id, Serial
+      property :name, String
+      
+      is :friendly, :friendship_class => "Membership", :require_acceptance => false
+    end
+    
+    module SomeModule
+      class Member
+        # include DataMapper::Resource
+        # property :id, Serial
+        # property :name, String
+        # 
+        # is :friendly, :friendship_class => "Membership"
+      end
+    end
   end
-
+  
+  describe "configuration" do
+    
+    context "default" do
+      it "should have proper options set" do
+        Person.friendly_config.friendship_class.to_s.should == "Friendship"
+        Person.friendly_config.reference_model.to_s.should     == "Person"
+        Person.friendly_config.friendship_foreign_key.should == :person_id
+        Person.friendly_config.require_acceptance?.should == true
+      end
+    end
+    
+    context "friendship_class and acceptance set" do
+      it "should have proper options set" do
+        Member.friendly_config.friendship_class.to_s.should == "Membership"
+        Member.friendly_config.reference_model.to_s.should     == "Member"
+        Member.friendly_config.friendship_foreign_key.should == :member_id
+        Member.friendly_config.require_acceptance?.should == false
+      end
+    end
+    
+    context "with a namespace" do
+      pending "should have proper options set" do
+        SomeModule::Member.friendly_config.friendship_class.to_s.should == "Friendship"
+        SomeModule::Member.friendly_config.reference_model.to_s.should     == "Person"
+        SomeModule::Member.friendly_config.friendship_foreign_key.should == :person_id
+        SomeModule::Member.friendly_config.require_acceptance?.should == true
+      end
+    end
+  end
+  
   with_adapters do
   
-    describe "with friendships" do
+    describe "default" do
       before(:all) do
         DataMapper.auto_migrate!         
         @quentin = Person.create(:name => "quentin")
@@ -45,14 +81,9 @@ describe 'DataMapper::Is::Friendly' do
       end
 
       it "should set the proper relationships" do
-        # see if associations are correct
-        log("@quention.friendship_requests")
         @quentin.friendship_requests.should_not include(@joe)
-        log("@joe.friendship_requests")
         @joe.friendship_requests.should include(@quentin)
-        log("@quention.friendships_to_accept")
         @quentin.friendships_to_accept.should include(@joe)
-        log("@joe.friendships_to_accept")
         @joe.friendships_to_accept.should_not include(@quentin)
       end
   
@@ -105,15 +136,15 @@ describe 'DataMapper::Is::Friendly' do
       before(:all) do
         DataMapper.auto_migrate!
     
-        @quentin = Gangster.create(:name => "quentin")
-        @aaron = Gangster.create(:name => "aaron") # state: "pending"
-        @joe = Gangster.create(:name => "joe")
+        @quentin = Member.create(:name => "quentin")
+        @aaron   = Member.create(:name => "aaron")
+        @joe     = Member.create(:name => "joe")
       end
     
       it "should work" do
         lambda do
           @joe.request_friendship(@quentin)
-        end.should change(Initiation, :count).by(1)
+        end.should change(Membership, :count).by(1)
       end
   
       it "should recognize every friend request" do
@@ -140,7 +171,7 @@ describe 'DataMapper::Is::Friendly' do
           @joe.should have(1).friends
           @quentin.should have(1).friends
           
-        end.should_not change(Initiation,:count)
+        end.should_not change(Membership,:count)
       end
 
       it "should be able to have multiple friends" do
@@ -152,7 +183,7 @@ describe 'DataMapper::Is::Friendly' do
       it "should be able to delete friendships" do
         lambda do
           @quentin.end_friendship_with(@joe)
-        end.should change(Initiation,:count)
+        end.should change(Membership,:count)
     
         @quentin.reload; @joe.reload
     
