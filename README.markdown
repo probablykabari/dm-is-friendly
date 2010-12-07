@@ -11,28 +11,25 @@ If you're building an app that require this type of relation then it will probab
 
     $ [sudo] gem install dm-is-friendly.
 
-Create a file for the friendship (or whatever you want to call it) class.
-
 ## Example DataMapper model ##
-
-    class Friendship
-      include DataMapper::Resource
-      property :person_id, Integer, :key => true
-      property :friend_id, Integer, :key => true
-      property :accepted_at, DateTime
-  
-      belongs_to :person
-      belongs_to :friend, :model => "Person", :child_key => [:friend_id]
-  
-    end
 
     class Person
       include DataMapper::Resource
       property :id, Serial
       property :name, String
   
-      is :friendly #, :friendship_class => "Friendship", :require_acceptance => true
+      is :friendly
     end
+
+A model called "Friendship" will be created for you and will include the association. Several helper methods (shown below) are added as well. Documentation of these methods is [here](http://rubydoc.info/github/RipTheJacker/dm-is-friendly/master/DataMapper/Is/Friendly/InstanceMethods).
+
+### Options ###
+
+**:require_acceptance**
+Set this if friendships should be accepted before showing up in the query of friends:   Default: true
+
+**:friendship_class**
+Set this to something other than "Friendship" if you want:  Default: "Friendship"
 
 ## Use It ##
 
@@ -60,16 +57,27 @@ Create a file for the friendship (or whatever you want to call it) class.
     # End friendships :(
     @quentin.end_friendship_with(@joe) # => true
     
-### Options ###
+Or without requiring acceptance
+  
+    class Person
+      include DataMapper::Resource
+      property :id, Serial
+      property :name, String
 
-**:require_acceptance**
-Set this if friendships should be accepted before showing up in the query of friends.
-Default: true
-**Must provide the :accepted_at Property*
+      is :friendly, :require_acceptance => false
+    end
+ 
+    @sue = Person.create(:name => "Sue")
+    @julie = Person.create(:name => "Julie")
+    
+    @sue.request_friendship(@julie)
+    @julie.is_friends_with?(@sue) # => 'true' since friendships don't need to be accepted
+    
+## Contributing ##
 
-**:friendship_class**
-Set this to something other than "Friendship" if you want.
-Default: "Friendship"
+If you want to contribute to this project, just fork it and make changes/pull requests in the **next** branch. Please run tests against ruby 1.8.7 and 1.9.2 before submitting! Everything else you need is in the Gemfile :)
 
+There are also a few roadmap items in the #issues section on github.
 
+Thanks!
 
