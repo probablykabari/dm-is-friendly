@@ -9,7 +9,7 @@ begin
     gemspec.summary = %Q{DataMapper plugin that adds self-referential friendship functionality to your models.}
     gemspec.email = "kabari@gmail.com"
     gemspec.homepage = "http://github.com/RipTheJacker/dm-is-friendly"
-    gemspec.authors = ["Kabari Hendrick"]
+    gemspec.authors = ["RipTheJacker"]
     
     gemspec.has_rdoc    = 'yard'
     gemspec.files = Dir['Rakefile', '{lib,spec}/**/*', 'README*', 'LICENSE*', 'VERSION'] - ['spec/log/dm.log']

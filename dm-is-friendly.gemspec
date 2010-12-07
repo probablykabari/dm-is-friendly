@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Kabari Hendrick"]
-  s.date = %q{2010-11-28}
+  s.authors = ["RipTheJacker"]
+  s.date = %q{2010-12-07}
   s.email = %q{kabari@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
     "spec/dm-is-friendly_spec.rb",
     "spec/spec_helper.rb"
   ]
+  s.has_rdoc = %q{yard}
   s.homepage = %q{http://github.com/RipTheJacker/dm-is-friendly}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
