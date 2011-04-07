@@ -11,18 +11,17 @@ module DataMapper
         reference_model      = self
         reference_model_name = DataMapper::Inflector.demodulize(self.name).downcase.to_sym
         
-        Object.full_const_set(options[:friendship_class], 
-          DataMapper::Model.new do
-            if options[:require_acceptance]
-              property :accepted_at, DateTime
-            end
-        
-            belongs_to reference_model_name, reference_model, :key => true
-            belongs_to :friend, :model => reference_model, :child_key => [:friend_id], :key => true
+        DataMapper::Ext::Object.full_const_set(options[:friendship_class], DataMapper::Model.new do
+          property :friend_id, Integer, :key => true
+          property reference_model.friendly_config.friendship_foreign_key, Integer, :key => true
+          
+          if options[:require_acceptance]
+            property :accepted_at, DateTime
           end
-        )
-        
-        friendship_class = Object.full_const_get(options[:friendship_class])
+          
+          belongs_to reference_model_name, reference_model
+          belongs_to :friend, :model => reference_model, :child_key => [:friend_id]
+        end)
         
         has n, :friendships, :model => options[:friendship_class]
         
@@ -45,7 +44,7 @@ module DataMapper
         end
         
         def friendship_class
-          Object.full_const_get(@friendship_class_name)
+          DataMapper::Ext::Object.full_const_get(@friendship_class_name)
         end
         
         def require_acceptance?

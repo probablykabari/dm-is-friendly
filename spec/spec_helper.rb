@@ -69,7 +69,7 @@ RSpec.configure do |config|
   
   config.extend( DataMapper::Spec::Adapters::Helpers)
   config.extend(SpecAdapterHelper)
-  
+    
   config.after :all do
     DataMapper::Spec.cleanup_models
   end

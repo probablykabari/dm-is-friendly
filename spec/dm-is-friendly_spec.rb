@@ -27,6 +27,8 @@ describe DataMapper::Is::Friendly do
         # is :friendly, :friendship_class => "Membership"
       end
     end
+    
+    DataMapper.finalize
   end
   
   describe "configuration" do
@@ -57,18 +59,29 @@ describe DataMapper::Is::Friendly do
         SomeModule::Member.friendly_config.require_acceptance?.should == true
       end
     end
+    
+    focused "should create DataMapper::Model classes for relationships" do
+      Membership.should be_kind_of(DataMapper::Model)
+      Friendship.should be_kind_of(DataMapper::Model)
+    end
+
+    focused "should add friendship classes to DataMapper::Model.descendants" do
+      DataMapper::Model.descendants.should include(Membership)
+      DataMapper::Model.descendants.should include(Friendship)    
+    end
   end
   
   with_adapters do
   
     describe "default" do
       before(:all) do
-        DataMapper.auto_migrate!         
+        DataMapper.auto_migrate!
+        
         @quentin = Person.create(:name => "quentin")
         @aaron   = Person.create(:name => "aaron")
         @joe     = Person.create(:name => "joe")
       end
-    
+      
       it "should work" do
         lambda do
           @joe.request_friendship(@quentin)
@@ -140,7 +153,7 @@ describe DataMapper::Is::Friendly do
         @aaron   = Member.create(:name => "aaron")
         @joe     = Member.create(:name => "joe")
       end
-    
+            
       it "should work" do
         lambda do
           @joe.request_friendship(@quentin)
