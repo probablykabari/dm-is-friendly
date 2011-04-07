@@ -24,9 +24,11 @@ describe DataMapper::Is::Friendly do
         # property :id, Serial
         # property :name, String
         # 
-        # is :friendly, :friendship_class => "Membership"
+        # is :friendly
       end
     end
+    
+    DataMapper.finalize
   end
   
   describe "configuration" do
@@ -34,8 +36,9 @@ describe DataMapper::Is::Friendly do
     context "default" do
       it "should have proper options set" do
         Person.friendly_config.friendship_class.to_s.should == "Friendship"
-        Person.friendly_config.reference_model.to_s.should     == "Person"
+        Person.friendly_config.reference_model_name.should     == "Person"
         Person.friendly_config.friendship_foreign_key.should == :person_id
+        Person.friendly_config.friend_foreign_key.should  == :friendship_id
         Person.friendly_config.require_acceptance?.should == true
       end
     end
@@ -43,19 +46,31 @@ describe DataMapper::Is::Friendly do
     context "friendship_class and acceptance set" do
       it "should have proper options set" do
         Member.friendly_config.friendship_class.to_s.should == "Membership"
-        Member.friendly_config.reference_model.to_s.should     == "Member"
+        Member.friendly_config.reference_model_name.should     == "Member"
         Member.friendly_config.friendship_foreign_key.should == :member_id
+        Member.friendly_config.friend_foreign_key.should  == :membership_id
         Member.friendly_config.require_acceptance?.should == false
       end
     end
     
     context "with a namespace" do
       pending "should have proper options set" do
-        SomeModule::Member.friendly_config.friendship_class.to_s.should == "Friendship"
-        SomeModule::Member.friendly_config.reference_model.to_s.should     == "Person"
+        SomeModule::Member.friendly_config.friendship_class.to_s.should == "SomeModule::Friendship"
+        SomeModule::Member.friendly_config.reference_model_name.should     == "Member"
         SomeModule::Member.friendly_config.friendship_foreign_key.should == :person_id
+        SomeModule::Member.friendly_config.friend_foreign_key.should  == :friendship_id
         SomeModule::Member.friendly_config.require_acceptance?.should == true
       end
+    end
+    
+    focused "should create DataMapper::Model classes for relationships" do
+      Membership.should be_kind_of(DataMapper::Model)
+      Friendship.should be_kind_of(DataMapper::Model)
+    end
+
+    focused "should add friendship classes to DataMapper::Model.descendants" do
+      DataMapper::Model.descendants.should include(Membership)
+      DataMapper::Model.descendants.should include(Friendship)    
     end
   end
   
@@ -63,12 +78,13 @@ describe DataMapper::Is::Friendly do
   
     describe "default" do
       before(:all) do
-        DataMapper.auto_migrate!         
+        DataMapper.auto_migrate!
+        
         @quentin = Person.create(:name => "quentin")
         @aaron   = Person.create(:name => "aaron")
         @joe     = Person.create(:name => "joe")
       end
-    
+      
       it "should work" do
         lambda do
           @joe.request_friendship(@quentin)
@@ -135,12 +151,12 @@ describe DataMapper::Is::Friendly do
     describe "without requiring acceptance" do
       before(:all) do
         DataMapper.auto_migrate!
-    
+        
         @quentin = Member.create(:name => "quentin")
         @aaron   = Member.create(:name => "aaron")
         @joe     = Member.create(:name => "joe")
       end
-    
+            
       it "should work" do
         lambda do
           @joe.request_friendship(@quentin)
