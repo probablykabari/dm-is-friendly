@@ -46,6 +46,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<dm-types>, ["~> 1.1.0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.1.0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-core>, ["~> 1.0.2"])
     else
       s.add_dependency(%q<dm-core>, ["~> 1.1.0"])
       s.add_dependency(%q<rake>, ["~> 0.8.7"])
@@ -55,6 +56,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<dm-types>, ["~> 1.1.0"])
       s.add_dependency(%q<rspec>, ["~> 2.1.0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<dm-core>, ["~> 1.0.2"])
     end
   else
     s.add_dependency(%q<dm-core>, ["~> 1.1.0"])
@@ -65,6 +67,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<dm-types>, ["~> 1.1.0"])
     s.add_dependency(%q<rspec>, ["~> 2.1.0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
+    s.add_dependency(%q<dm-core>, ["~> 1.0.2"])
   end
 end
 
