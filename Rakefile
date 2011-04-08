@@ -14,9 +14,6 @@ begin
     gemspec.has_rdoc    = 'yard'
     gemspec.files = Dir['Rakefile', '{lib,spec}/**/*', 'README*', 'LICENSE*', 'VERSION'] - ['spec/log/dm.log']
                       
-    gemspec.add_development_dependency("rspec", "~> 2.1.0")
-    gemspec.add_development_dependency("jeweler")
-    gemspec.add_dependency("dm-core", "~> 1.0.2")
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError => e
@@ -47,7 +44,7 @@ task :default => :spec
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "dm-is-friendly 1.0.2"
+  rdoc.title = "dm-is-friendly 1.1.01"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

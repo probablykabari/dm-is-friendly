@@ -9,7 +9,6 @@ group :runtime do # Runtime dependencies (as in the gemspec)
 end
 
 group(:development) do # Development dependencies (as in the gemspec)
-
   gem 'rake',           '~> 0.8.7'
   gem 'rspec',          '~> 2.1.0'
   gem 'jeweler',        '~> 1.4'
