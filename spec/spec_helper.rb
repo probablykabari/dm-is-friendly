@@ -33,6 +33,7 @@ def load_driver(name, default_uri)
   return false unless DRIVERS[name]
   
   begin
+    # DataMapper::Logger.new('./spec/log/dm.log')
     DataMapper.setup(name, ENV["#{name.to_s.upcase}_SPEC_URI"] || default_uri)
     DataMapper::Repository.adapters[:default] = DataMapper::Repository.adapters[name]
     true
@@ -58,7 +59,7 @@ module SpecAdapterHelper
   def self.extended(base)
     base.class_eval do      
       def log(msg)
-        DataMapper.logger.push("****** #{msg}")
+        DataMapper.logger.debug("****** #{msg}")
       end
     end
   end

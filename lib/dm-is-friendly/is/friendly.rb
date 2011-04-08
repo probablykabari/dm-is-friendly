@@ -14,10 +14,10 @@ module DataMapper
         
         namespace = list.empty? ? ::Object : DataMapper::Ext::Object.full_const_get(list.join('::'))
         
-        @friendly_config = FriendlyConfig.new(reference_model_name, options)        
+        @friendly_config = FriendlyConfig.new(reference_model_name, "#{namespace}::#{options[:friendship_class]}", options[:require_acceptance])
         def self.friendly_config; @friendly_config; end
 
-        DataMapper::Model.new(options[:friendship_class]) do          
+        DataMapper::Model.new(options[:friendship_class], namespace) do          
           if options[:require_acceptance]
             property :accepted_at, DateTime
           end
@@ -38,12 +38,12 @@ module DataMapper
       class FriendlyConfig
         attr_reader :reference_model_name, :friendship_foreign_key, :friend_foreign_key
         
-        def initialize(ref_model_name, opts)
+        def initialize(ref_model_name, friendship_class, require_acceptance)
           @reference_model_name        = ref_model_name
-          @friendship_class_name  = opts[:friendship_class]
+          @friendship_class_name  = friendship_class
           @friendship_foreign_key = DataMapper::Inflector.foreign_key(@reference_model_name).to_sym
           @friend_foreign_key     = DataMapper::Inflector.foreign_key(@friendship_class_name).to_sym
-          @require_acceptance     = opts[:require_acceptance]
+          @require_acceptance     = require_acceptance
         end
         
         def friendship_class
