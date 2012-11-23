@@ -4,13 +4,13 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{dm-is-friendly}
-  s.version = "1.1.15"
+  s.name = "dm-is-friendly"
+  s.version = "1.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["RipTheJacker"]
-  s.date = %q{2011-04-08}
-  s.email = %q{kabari@gmail.com}
+  s.date = "2012-11-23"
+  s.email = "kabari@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE",
     "README.markdown"
@@ -25,40 +25,39 @@ Gem::Specification.new do |s|
     "spec/dm-is-friendly_spec.rb",
     "spec/spec_helper.rb"
   ]
-  s.homepage = %q{http://github.com/RipTheJacker/dm-is-friendly}
+  s.homepage = "http://github.com/RipTheJacker/dm-is-friendly"
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
-  s.summary = %q{DataMapper plugin that adds self-referential friendship functionality to your models.}
-  s.test_files = [
-    "spec/dm-is-friendly_spec.rb",
-    "spec/spec_helper.rb"
-  ]
+  s.rubygems_version = "1.8.24"
+  s.summary = "DataMapper plugin that adds self-referential friendship functionality to your models."
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<dm-core>, ["~> 1.1.0"])
-      s.add_development_dependency(%q<rake>, ["~> 0.8.7"])
-      s.add_development_dependency(%q<rspec>, ["~> 2.1.0"])
+      s.add_runtime_dependency(%q<dm-core>, ["~> 1.2.0"])
+      s.add_development_dependency(%q<rake>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, ["~> 2.12.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.4"])
-      s.add_development_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
-      s.add_development_dependency(%q<dm-types>, ["~> 1.1.0"])
+      s.add_development_dependency(%q<dm-aggregates>, ["~> 1.2.0"])
+      s.add_development_dependency(%q<dm-types>, ["~> 1.2.0"])
+      s.add_development_dependency(%q<dm-migrations>, ["~> 1.2.0"])
     else
-      s.add_dependency(%q<dm-core>, ["~> 1.1.0"])
-      s.add_dependency(%q<rake>, ["~> 0.8.7"])
-      s.add_dependency(%q<rspec>, ["~> 2.1.0"])
+      s.add_dependency(%q<dm-core>, ["~> 1.2.0"])
+      s.add_dependency(%q<rake>, [">= 0"])
+      s.add_dependency(%q<rspec>, ["~> 2.12.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.4"])
-      s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
-      s.add_dependency(%q<dm-types>, ["~> 1.1.0"])
+      s.add_dependency(%q<dm-aggregates>, ["~> 1.2.0"])
+      s.add_dependency(%q<dm-types>, ["~> 1.2.0"])
+      s.add_dependency(%q<dm-migrations>, ["~> 1.2.0"])
     end
   else
-    s.add_dependency(%q<dm-core>, ["~> 1.1.0"])
-    s.add_dependency(%q<rake>, ["~> 0.8.7"])
-    s.add_dependency(%q<rspec>, ["~> 2.1.0"])
+    s.add_dependency(%q<dm-core>, ["~> 1.2.0"])
+    s.add_dependency(%q<rake>, [">= 0"])
+    s.add_dependency(%q<rspec>, ["~> 2.12.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.4"])
-    s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
-    s.add_dependency(%q<dm-types>, ["~> 1.1.0"])
+    s.add_dependency(%q<dm-aggregates>, ["~> 1.2.0"])
+    s.add_dependency(%q<dm-types>, ["~> 1.2.0"])
+    s.add_dependency(%q<dm-migrations>, ["~> 1.2.0"])
   end
 end
 
