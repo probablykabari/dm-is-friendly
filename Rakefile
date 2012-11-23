@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rake'
-require 'rake/rdoctask'
 
 begin
   require 'jeweler'
@@ -10,10 +9,10 @@ begin
     gemspec.email = "kabari@gmail.com"
     gemspec.homepage = "http://github.com/RipTheJacker/dm-is-friendly"
     gemspec.authors = ["RipTheJacker"]
-    
+
     gemspec.has_rdoc    = 'yard'
     gemspec.files = Dir['Rakefile', '{lib,spec}/**/*', 'README*', 'LICENSE*', 'VERSION'] - ['spec/log/dm.log']
-                      
+
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError => e
@@ -30,7 +29,7 @@ begin
     t.rcov = true
     t.rcov_opts =  %[-Ilib -Ispec --exclude "spec/spec_helper.rb"]
     t.rcov_opts << %[--no-html --aggregate coverage.data]
-  end  
+  end
 rescue LoadError
   task :spec do
     abort "RSpec gem is not available. In order to test use: bundle install"
@@ -41,13 +40,6 @@ end
 
 task :default => :spec
 
-
-Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "dm-is-friendly 1.1.01"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
 
 begin
   require 'reek/adapters/rake_task'
