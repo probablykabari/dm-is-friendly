@@ -23,15 +23,15 @@ ENV['LOG'] ||= "file"
 
 ADAPTERS = ENV["ADAPTERS"].split(' ')
 
-DRIVERS = { 
+DRIVERS = {
   :sqlite  => 'sqlite3::memory:',
-  :mysql    => 'mysql://datamapper:datamapper@localhost/dm_is_friendly_test',
-  :postgres => 'postgres://postgres:postgres@localhost/dm_is_friendly_test'
+  :mysql    => 'mysql://datamapper:datamapper@localhost/dm_plugin_test',
+  :postgres => 'postgres://datamapper:datamapper@localhost/dm_plugin_test'
 }
 
 def load_driver(name, default_uri)
   return false unless DRIVERS[name]
-  
+
   begin
     # DataMapper::Logger.new('./spec/log/dm.log')
     DataMapper.setup(name, ENV["#{name.to_s.upcase}_SPEC_URI"] || default_uri)
@@ -50,14 +50,14 @@ module SpecAdapterHelper
         before(:all) do
           load_driver(adapter.to_sym, ::DRIVERS[adapter.to_sym])
         end
-        
+
         instance_eval(&block)
       end
     end
   end
-  
+
   def self.extended(base)
-    base.class_eval do      
+    base.class_eval do
       def log(msg)
         DataMapper.logger.debug("****** #{msg}")
       end
@@ -67,10 +67,10 @@ module SpecAdapterHelper
 end
 
 RSpec.configure do |config|
-  
+
   config.extend( DataMapper::Spec::Adapters::Helpers)
   config.extend(SpecAdapterHelper)
-    
+
   config.after :all do
     DataMapper::Spec.cleanup_models
   end
